@@ -1,4 +1,5 @@
-﻿using ShekelTest.Models;
+﻿using ShekelTest.DataAccess;
+using ShekelTest.Models;
 
 namespace ShekelTest.Services
 {
@@ -17,7 +18,8 @@ namespace ShekelTest.Services
 
         public List<Customer> GetCustomers()
         {
-            return _customerItems;
+            DBRepository.Instance.get();
+            return null;
         }
     }
 }

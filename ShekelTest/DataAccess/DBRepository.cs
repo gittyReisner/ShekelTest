@@ -1,5 +1,7 @@
-﻿using ShekelTest.Models;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using ShekelTest.Models;
 using System.Configuration;
+using System.Data;
 
 namespace ShekelTest.DataAccess
 {
@@ -39,22 +41,69 @@ namespace ShekelTest.DataAccess
         }
 
 
-        public static Customer AddCustomer(Customer customer)
+        //public static Customer AddCustomer(Customer customer)
+        //{
+        //    using (SqlConnection connection = new SqlConnection(GetConnectionString())
+        //    {
+        //        using (SqlCommand cmd = new SqlCommand("InsertCustomer", connection))
+        //        {
+        //            /*cmd.CommandText = $"INSERT into Customer VALUES ({customer.CustomerId}, {customer.Name}, {customer.Address}, {customer.Phone})";
+        //            connection.Open();
+        //            cmd.ExecuteNonQuery();
+        //            connection.Close();
+        //            */
+
+
+        //        cmd.CommandType = CommandType.StoredProcedure;
+        //        cmd.Parameters.AddWithValue("@customerId", SqlDbType.NVarChar).Value = customer.CustomerId;
+        //        cmd.Parameters.AddWithValue("@name", SqlDbType.NVarChar).Value = customer.Name;
+        //        cmd.Parameters.AddWithValue("@address", SqlDbType.Int).Value = customer.Address;
+        //        cmd.Parameters.AddWithValue("@phone", SqlDbType.Int).Value = customer.Phone;
+        //        connection.Open();
+        //        cmd.ExecuteNonQuery();
+        //        connection.Close();
+
+        //    }
+        //}
+
+        public void get()
         {
+
+        }
+
+        /*public static List<Customer> GetCustomers()
+        {
+            var customers = new List<Customer>();
             using (SqlConnection connection = new SqlConnection(GetConnectionString())
             {
-                using (SqlCommand cmd = new SqlCommand())
+            using (SqlCommand cmd = new SqlCommand(connection))
+            {
+                cmd.CommandText = @"select groups.groupCode, groupName, customers.customerId, name, address, phone from groups
+                    left join factoriesToCustomer on groups.groupCode = factoriesToCustomer.groupCode
+                    left join customers on factoriesToCustomer.customerId = customers.customerId";
+                connection.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    cmd.CommandText = $"INSERT into Customer VALUES ({customer.CustomerId}, {customer.Name}, {customer.Address}, {customer.Phone})";
-                    connection.Open();
-                    cmd.ExecuteNonQuery();
-                    connection.Close();
+                    while (reader.Read())
+                    {
+                        var customer = new Customer();
+                        var group = new Group();
+                        group.GroupCode = Convert.ToInt32(reader["grouoCode"].ToString());
+                        customer.CustomerId = reader["customerId"];
+                        customer.Name = reader["name"];
+                        customer.Address = reader["address"];
+                        customer.Phone = reader["phone"]
 
-
-                cmd.CommandType
-          
+                        customers.Add(customer);
+                    }
                 }
+
+                connection.Close();
+
             }
-        }   
+            return customers;
+        }
+    } */
+
     }
 }
