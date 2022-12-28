@@ -19,14 +19,14 @@ namespace ShekelTest.Controllers
 
         }
 
-        [HttpGet("/api/customers")]
-        public ActionResult<List<ListCustomers>> GetCustomers()
+        [HttpGet("/api/groups")]
+        public ActionResult<List<Group>> GetGroups()
         {
-            return _service.GetCustomers();
+            return _service.GetGroups();
         }
 
         [HttpPost("/api/customers")]
-        public ActionResult<AddCustomer> AddCustomer(AddCustomer customerItem)
+        public ActionResult<Customer> AddCustomer(Customer customerItem)
         {
             _service.AddCustomer(customerItem);
             return customerItem;

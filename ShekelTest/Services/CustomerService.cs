@@ -5,15 +5,15 @@ namespace ShekelTest.Services
 {
     public class CustomerService : ICustomersService
     {
-        public AddCustomer AddCustomer(AddCustomer customerItem)
+        public Customer AddCustomer(Customer customerItem)
         {
             DBRepository.Instance.AddCustomer(customerItem);
             return customerItem;
         }
 
-        public List<ListCustomers> GetCustomers()
+        public List<Group> GetGroups()
         {
-            return DBRepository.Instance.GetCustomers();
+            return DBRepository.Instance.GetGroups();
         }
     }
 }

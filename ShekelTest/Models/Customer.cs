@@ -1,10 +1,10 @@
 ﻿namespace ShekelTest.Models
 {
-    public class Customer
+    public class Customer : BaseCustomer
     {
-        public string CustomerId { get; set; }
-        public string Name { get; set; }
+        public int GroupCode { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
+        public int FactoryCode { get; set; }
     }
 }

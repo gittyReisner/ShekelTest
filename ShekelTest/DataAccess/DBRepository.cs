@@ -42,23 +42,23 @@ namespace ShekelTest.DataAccess
         }
 
 
-        public AddCustomer AddCustomer(AddCustomer addCustomer)
+        public Customer AddCustomer(Customer addCustomer)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 using (SqlCommand cmd = new SqlCommand("InsertCustomer", connection))
                 {
-                    /*cmd.CommandText = $"INSERT into Customer VALUES ({addCustomer.customer.CustomerId}, {addCustomer.customer.Name}, {addCustomer.customer.Address}, {addCustomer.customer.Phone})
+                    /*cmd.CommandText = $"INSERT into Customer VALUES ({addCustomer.CustomerId}, {addCustomer.Name}, {addCustomer.Address}, {addCustomer.Phone})
                      * InsertTo FactoriesToCustomers VALUES ({addCustomer.groupCode}, {addCustomer.factoryCode}, {addCustomer.customerId})";
                     connection.Open();
                     cmd.ExecuteNonQuery();
                     connection.Close();
                     */
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@customerId", SqlDbType.NVarChar).Value = addCustomer.Customer.CustomerId;
-                    cmd.Parameters.AddWithValue("@name", SqlDbType.NVarChar).Value = addCustomer.Customer.Name;
-                    cmd.Parameters.AddWithValue("@address", SqlDbType.NVarChar).Value = addCustomer.Customer.Address;
-                    cmd.Parameters.AddWithValue("@phone", SqlDbType.NVarChar).Value = addCustomer.Customer.Phone;
+                    cmd.Parameters.AddWithValue("@customerId", SqlDbType.NVarChar).Value = addCustomer.CustomerId;
+                    cmd.Parameters.AddWithValue("@name", SqlDbType.NVarChar).Value = addCustomer.Name;
+                    cmd.Parameters.AddWithValue("@address", SqlDbType.NVarChar).Value = addCustomer.Address;
+                    cmd.Parameters.AddWithValue("@phone", SqlDbType.NVarChar).Value = addCustomer.Phone;
                     cmd.Parameters.AddWithValue("@groupCode", SqlDbType.Int).Value = addCustomer.GroupCode;
                     cmd.Parameters.AddWithValue("@factoryCode", SqlDbType.Int).Value = addCustomer.FactoryCode;
 
@@ -71,12 +71,12 @@ namespace ShekelTest.DataAccess
             return addCustomer;
         }
 
-        public List<ListCustomers> GetCustomers()
+        public List<Customer> GetCustomers()
         {
-            var customers = new List<ListCustomers>();
+            var customers = new List<Customer>();
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                var CommandText = @"select groups.groupCode, groupName, customers.customerId, name from groups
+                var CommandText = @"select groups.groupCode, groupName, customers.customerId, name, phone, address from groups
                     join factoriesToCustomer on groups.groupCode = factoriesToCustomer.groupCode
                     join customers on factoriesToCustomer.customerId = customers.customerId";
                 using (SqlCommand cmd = new SqlCommand(CommandText, connection))
@@ -86,11 +86,12 @@ namespace ShekelTest.DataAccess
                     {
                         while (reader.Read())
                         {
-                            var customer = new ListCustomers();
-                            customer.groupCode = (int)reader["groupCode"];
-                            customer.groupName = (string)reader["groupName"];
-                            customer.customerId = (string)reader["customerId"];
-                            customer.name = (string)reader["name"];
+                            var customer = new Customer();
+                            customer.GroupCode = (int)reader["groupCode"];
+                            customer.CustomerId = (string)reader["customerId"];
+                            customer.Name = (string)reader["name"];
+                            customer.Phone = (string)reader["phone"];
+                            customer.Address = (string)reader["address"];
                             customers.Add(customer);
                         }
                     }
@@ -101,5 +102,35 @@ namespace ShekelTest.DataAccess
                 return customers;
             }
         }
+        public List<Group> GetGroups()
+        {
+            var groups = new List<Group>();
+            var allCustomers = GetCustomers();
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                var CommandText = @"select * from groups";
+                using (SqlCommand cmd = new SqlCommand(CommandText, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var group = new Group();
+                            group.GroupCode = (int)reader["groupCode"];
+                            group.GroupName = (string)reader["groupName"];
+                            group.Customers = allCustomers.Where(customer => customer.GroupCode == group.GroupCode)?
+                                .Select(x => new BaseCustomer { CustomerId = x.CustomerId, Name = x.Name })?.ToList();
+                            groups.Add(group);
+                        }
+                    }
+
+                    connection.Close();
+
+                }
+                return groups;
+            }
+        }
     }
 }
+
