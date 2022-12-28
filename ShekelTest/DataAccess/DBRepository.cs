@@ -48,7 +48,8 @@ namespace ShekelTest.DataAccess
             {
                 using (SqlCommand cmd = new SqlCommand("InsertCustomer", connection))
                 {
-                    /*cmd.CommandText = $"INSERT into Customer VALUES ({customer.CustomerId}, {customer.Name}, {customer.Address}, {customer.Phone})";
+                    /*cmd.CommandText = $"INSERT into Customer VALUES ({addCustomer.customer.CustomerId}, {addCustomer.customer.Name}, {addCustomer.customer.Address}, {addCustomer.customer.Phone})
+                     * InsertTo FactoriesToCustomers VALUES ({addCustomer.groupCode}, {addCustomer.factoryCode}, {addCustomer.customerId})";
                     connection.Open();
                     cmd.ExecuteNonQuery();
                     connection.Close();
