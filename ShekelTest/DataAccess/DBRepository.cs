@@ -2,6 +2,7 @@
 using ShekelTest.Models;
 using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace ShekelTest.DataAccess
 {
@@ -36,74 +37,70 @@ namespace ShekelTest.DataAccess
                    .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
-            var connectionString = Configuration["ConnectionStrings:dbo"];
+            var connectionString = Configuration.GetConnectionString("EFCoreTestContext");
             return connectionString;
         }
 
 
-        //public static Customer AddCustomer(Customer customer)
-        //{
-        //    using (SqlConnection connection = new SqlConnection(GetConnectionString())
-        //    {
-        //        using (SqlCommand cmd = new SqlCommand("InsertCustomer", connection))
-        //        {
-        //            /*cmd.CommandText = $"INSERT into Customer VALUES ({customer.CustomerId}, {customer.Name}, {customer.Address}, {customer.Phone})";
-        //            connection.Open();
-        //            cmd.ExecuteNonQuery();
-        //            connection.Close();
-        //            */
-
-
-        //        cmd.CommandType = CommandType.StoredProcedure;
-        //        cmd.Parameters.AddWithValue("@customerId", SqlDbType.NVarChar).Value = customer.CustomerId;
-        //        cmd.Parameters.AddWithValue("@name", SqlDbType.NVarChar).Value = customer.Name;
-        //        cmd.Parameters.AddWithValue("@address", SqlDbType.Int).Value = customer.Address;
-        //        cmd.Parameters.AddWithValue("@phone", SqlDbType.Int).Value = customer.Phone;
-        //        connection.Open();
-        //        cmd.ExecuteNonQuery();
-        //        connection.Close();
-
-        //    }
-        //}
-
-        public void get()
+        public AddCustomer AddCustomer(AddCustomer addCustomer)
         {
-
-        }
-
-        /*public static List<Customer> GetCustomers()
-        {
-            var customers = new List<Customer>();
-            using (SqlConnection connection = new SqlConnection(GetConnectionString())
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-            using (SqlCommand cmd = new SqlCommand(connection))
-            {
-                cmd.CommandText = @"select groups.groupCode, groupName, customers.customerId, name, address, phone from groups
-                    left join factoriesToCustomer on groups.groupCode = factoriesToCustomer.groupCode
-                    left join customers on factoriesToCustomer.customerId = customers.customerId";
-                connection.Open();
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlCommand cmd = new SqlCommand("InsertCustomer", connection))
                 {
-                    while (reader.Read())
-                    {
-                        var customer = new Customer();
-                        var group = new Group();
-                        group.GroupCode = Convert.ToInt32(reader["grouoCode"].ToString());
-                        customer.CustomerId = reader["customerId"];
-                        customer.Name = reader["name"];
-                        customer.Address = reader["address"];
-                        customer.Phone = reader["phone"]
+                    /*cmd.CommandText = $"INSERT into Customer VALUES ({customer.CustomerId}, {customer.Name}, {customer.Address}, {customer.Phone})";
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                    */
 
-                        customers.Add(customer);
-                    }
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@customerId", SqlDbType.NVarChar).Value = addCustomer.Customer.CustomerId;
+                    cmd.Parameters.AddWithValue("@name", SqlDbType.NVarChar).Value = addCustomer.Customer.Name;
+                    cmd.Parameters.AddWithValue("@address", SqlDbType.NVarChar).Value = addCustomer.Customer.Address;
+                    cmd.Parameters.AddWithValue("@phone", SqlDbType.NVarChar).Value = addCustomer.Customer.Phone;
+                    cmd.Parameters.AddWithValue("@groupCode", SqlDbType.Int).Value = addCustomer.GroupCode;
+                    cmd.Parameters.AddWithValue("@factoryCode", SqlDbType.Int).Value = addCustomer.FactoryCode;
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+
                 }
-
-                connection.Close();
-
             }
-            return customers;
+            return addCustomer;
         }
-    } */
 
+        public List<ListCustomers> GetCustomers()
+        {
+            var customers = new List<ListCustomers>();
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                var CommandText = @"select groups.groupCode, groupName, customers.customerId, name from groups
+                    join factoriesToCustomer on groups.groupCode = factoriesToCustomer.groupCode
+                    join customers on factoriesToCustomer.customerId = customers.customerId";
+                using (SqlCommand cmd = new SqlCommand(CommandText, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var customer = new ListCustomers();
+                            customer.groupCode = (int)reader["groupCode"];
+                            customer.groupName = (string)reader["groupName"];
+                            customer.customerId = (string)reader["customerId"];
+                            customer.name = (string)reader["name"];
+                            customers.Add(customer);
+                        }
+                    }
+
+                    connection.Close();
+
+                }
+                return customers;
+            }
+        }
     }
 }

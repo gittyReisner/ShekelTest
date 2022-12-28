@@ -1,8 +1,8 @@
 ﻿namespace ShekelTest.Models
 {
-    public class FactoriesToCustomer
+    public class AddCustomer
     {
-        public string CustomerId { get; set; }
+        public Customer Customer { get; set; }
         public int GroupCode { get; set; }
         public int FactoryCode { get; set; }
 

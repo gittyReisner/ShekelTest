@@ -4,9 +4,9 @@ namespace ShekelTest.Services
 {
     public interface ICustomersService
     {
-        public List<Customer> GetCustomers();
+        public List<ListCustomers> GetCustomers();
 
-        public Customer AddCustomer(Customer customerItem);
+        public AddCustomer AddCustomer(AddCustomer customerItem);
 
     }
 }
