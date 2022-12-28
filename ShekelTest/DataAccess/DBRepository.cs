@@ -53,8 +53,6 @@ namespace ShekelTest.DataAccess
                     cmd.ExecuteNonQuery();
                     connection.Close();
                     */
-
-
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@customerId", SqlDbType.NVarChar).Value = addCustomer.Customer.CustomerId;
                     cmd.Parameters.AddWithValue("@name", SqlDbType.NVarChar).Value = addCustomer.Customer.Name;
